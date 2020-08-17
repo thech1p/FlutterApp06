@@ -1,4 +1,6 @@
+import 'package:FlutterApp06/Data_Models/user_account.dart';
 import 'package:FlutterApp06/Frontend/registration_page.dart';
+import 'package:FlutterApp06/Services/firestore_services.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,14 +10,23 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'login_page.dart';
 
 class LoggedInPage extends StatefulWidget {
+
+  String userId; 
+
+  LoggedInPage(this.userId);
+
   @override
   _LoggedInPageState createState() => _LoggedInPageState();
 }
 
 class _LoggedInPageState extends State<LoggedInPage> {
+  FirestoreService firestoreService = new FirestoreService();
+
   bool showProgress = false;
   @override
   Widget build(BuildContext context) {
+    String id = widget.userId;
+    //UserAccount targetAccount = await firestoreService.getUser(widget.userId);
     return Scaffold(
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(50.0), // here the desired height
@@ -28,38 +39,61 @@ class _LoggedInPageState extends State<LoggedInPage> {
               backgroundColorStart: Colors.cyan,
               backgroundColorEnd: Colors.pink,
             )),
-        body: Center(child: Container(
-
-
-          child: Column(children: [Material(
-                  elevation: 5,
-                  color: Colors.lightBlue,
-                  borderRadius: BorderRadius.circular(32.0),
-                  child: MaterialButton(
-                    onPressed: () async {
+        body: Center(
+            child: Container(
+          child: Column(
+            children: [
+              
+              Container(child: Text("USER INFO")),
+              
+              StreamBuilder<List<UserAccount>>(
+                   stream: firestoreService.getUser(id),
+                   builder: (context, snapshot) {
+                     if (snapshot.hasData) {
+                       return Text(snapshot.data.toString());
+                      //  ListView.builder(
+                      //      itemCount: snapshot.data.length,
+                      //      itemBuilder: (context, index) {
+                      //        return ListTile(
+                      //            title: Text(snapshot.data[index].name),
+                      //            subtitle: Text("Age: " +
+                      //                snapshot.data[index].age.toString()));
+                      //      });
+                     } else {
+                       return Text("Loading");
+                     }
+                   }),
+              
+              Material(
+                elevation: 5,
+                color: Colors.lightBlue,
+                borderRadius: BorderRadius.circular(32.0),
+                child: MaterialButton(
+                  onPressed: () async {
+                    setState(() {
+                      showProgress = true;
+                    });
+                    try {
+                      Navigator.pop(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyHomePage()),
+                      );
                       setState(() {
-                        showProgress = true;
+                        showProgress = false;
                       });
-                      try {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MyHomePage()),
-                          );
-                          setState(() {
-                            showProgress = false;
-                          });
-                      } catch (e) {}
-                    },
-                    minWidth: 200.0,
-                    height: 45.0,
-                    child: Text(
-                      "Log out",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
-                    ),
+                    } catch (e) {}
+                  },
+                  minWidth: 200.0,
+                  height: 45.0,
+                  child: Text(
+                    "Log out",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
                   ),
-                ),],),
-        )));
+                ),
+              ),
+            ],
+          ),
+    )));
   }
 }

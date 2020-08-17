@@ -106,10 +106,11 @@ class _MyLoginPageState extends State<MyLoginPage> {
                           setState(() {
                             showProgress = false;
                           });
+                          print(newUser.user.uid);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoggedInPage()));
+                                builder: (context) => LoggedInPage(newUser.user.uid)));
                         
                         }
                       } catch (e) {}

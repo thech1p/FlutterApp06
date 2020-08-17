@@ -33,6 +33,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  uuid: ^2.2.0
   gradient_app_bar: ^0.0.1
   fluttertoast: ^7.0.2
   modal_progress_hud: ^0.1.3

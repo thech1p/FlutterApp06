@@ -1,8 +1,10 @@
+import 'package:FlutterApp06/Data_Models/user_account.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
+import 'package:FlutterApp06/Services/firestore_services.dart';
 import 'login_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -11,6 +13,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  FirestoreService firestoreService = new FirestoreService();
   final _auth = FirebaseAuth.instance;
   bool showProgress = false;
   String email, password, referralCode;
@@ -109,6 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         final newuser =
                             await _auth.createUserWithEmailAndPassword(
                                 email: email, password: password);
+                        
+                        firestoreService.postNewAccount(new UserAccount(newuser.user.uid, email, "REFLINK", 0), referralCode);
+                        
                         if (newuser != null) {
                           Navigator.push(
                             context,
