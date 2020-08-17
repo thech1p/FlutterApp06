@@ -112,10 +112,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         final newuser =
                             await _auth.createUserWithEmailAndPassword(
                                 email: email, password: password);
-                        
-                        firestoreService.postNewAccount(new UserAccount(newuser.user.uid, email, "REFLINK", 0), referralCode);
-                        
+
                         if (newuser != null) {
+                          print("newuser uid: " + newuser.user.uid);
+                          UserAccount newAccount = new UserAccount(newuser.user.uid, email, "REFLINK", 0);
+                          print("newAccount (id): " + newAccount.id);
+                          print("newAccount (id): " + newAccount.email);
+                          print("newAccount (id): " + newAccount.reflink);
+                          print("newAccount (id): " + newAccount.score.toString());
+                          firestoreService.postNewAccount(newAccount, referralCode.toString());
                           Navigator.push(
                             context,
                             MaterialPageRoute(

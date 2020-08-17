@@ -49,8 +49,19 @@ class _LoggedInPageState extends State<LoggedInPage> {
               StreamBuilder<List<UserAccount>>(
                    stream: firestoreService.getUser(id),
                    builder: (context, snapshot) {
-                     if (snapshot.hasData) {
-                       return Text(snapshot.data.toString());
+                     if (snapshot.hasData && snapshot.data.length > 0) {
+                       return Column(children: [
+                          SelectableText("Email: " + snapshot.data[0].email,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                          SelectableText("Personal Ref link: " + snapshot.data[0].reflink,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                          SelectableText("Personal Score: " + snapshot.data[0].score.toString(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold))
+                       ],);
+                      //Text(snapshot.data.toString());
                       //  ListView.builder(
                       //      itemCount: snapshot.data.length,
                       //      itemBuilder: (context, index) {

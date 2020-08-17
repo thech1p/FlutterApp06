@@ -160,7 +160,7 @@ class AppMainState extends StatelessWidget {
 //                           Color.fromRGBO(250, 150, 0, 1),
 //                           Color.fromRGBO(250, 250, 0, 1),
 //                         ],
-//                       ),
+//                       ),/
 //                     ),
 //                     padding: const EdgeInsets.all(10.0),
 //                     child: const Text('  Login  ',

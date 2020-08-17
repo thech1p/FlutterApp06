@@ -33,25 +33,46 @@ class FirestoreService
   }
 
 
-  void postNewAccount(UserAccount account, String referalCode) async
+  void postNewAccount(UserAccount account, String referralCode) async
   {
+    print("Post new account start.");
+    print("Account id: ||"+account.id+"||");
+    print("Account email: ||"+account.email+"||");
+    print("Account reflink: ||"+account.reflink+"||");
+    print("Referal Code: ||"+referralCode+"||");
     int scoreForNewUser = 0;
-
-    DocumentSnapshot linkOwner; 
-    await firestore.collection("users").where("reflink", isEqualTo:referalCode).getDocuments().then((event) {
+    DocumentSnapshot linkOwner;
+    if (referralCode != null)
+    {
+      print("Referral check follows...");
+      linkOwner = await firestore.collection("users").where("reflink", isEqualTo:referralCode).getDocuments().then((event) {
       if (event.documents.isNotEmpty)
       {
-        linkOwner = event.documents.first;
+        print("Referral found, returning.");
+        return event.documents.first;
       }
+      print("Referral NOT found, continuing.");
+      return null;
     });
+    }
+    else
+    {
+      print("No referral code provided.");
+    }
+
 
     if (linkOwner != null)
     {
-      await firestore.collection("users").document(linkOwner.documentID).updateData({"score":linkOwner["score"] + 100});
+      print("Link Owner: " + linkOwner.toString());
+      print("Updating score for link owner.");
+      int currentScore = await linkOwner["score"];
+      await firestore.collection("users").document(linkOwner.documentID).updateData({"score":(currentScore + 100)});
       scoreForNewUser = 50;
     }
     
+    
     var uuid = new Uuid();
+    print("Creating new user in database.");
     DocumentReference ref = await firestore.collection("users").add({
       "id":account.id,
       "email":account.email,
@@ -59,5 +80,6 @@ class FirestoreService
       "score":scoreForNewUser
       });
     print(ref.toString());
+    print("DONE.");
   }
 }
