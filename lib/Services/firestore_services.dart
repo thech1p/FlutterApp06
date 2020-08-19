@@ -1,3 +1,4 @@
+import 'package:FlutterApp06/Data_Models/chat_message.dart';
 import 'package:FlutterApp06/Data_Models/user_account.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -6,6 +7,44 @@ class FirestoreService
 {
   Firestore firestore = Firestore.instance;
   
+  Stream<List<ChatMessage>> streamMessages()
+  {
+    print("Stream message start");
+    return firestore.collection("chats").snapshots().map((snap)
+    {
+      print("Found Snaps: " + snap.documents.length.toString());
+      var tempList = snap.documents.map((e) => new ChatMessage.fromJson(e.data)).toList();
+      print("Snaps to return: " + tempList.toString());
+      return snap.documents.map((e) => new ChatMessage.fromJson(e.data)).toList();
+    });
+  }
+
+  void postChatMessage(String accountId, String message) async
+  {
+      print("POST MESSAGE ID: " + accountId);
+      print("POST MESSAGE MESSAGE: " + message);
+
+      UserAccount account = await firestore.collection("users").where("id", isEqualTo:accountId).getDocuments().then((event) {
+        if (event.documents.isNotEmpty)
+        {
+          return new UserAccount.fromJson(event.documents.first.data);
+        }
+      return null;
+      });
+
+      print("POST MESSAGE RETRIEVED ACCOUNT: " + account.id);
+
+      DocumentReference ref = await firestore.collection("chats").add({
+      "id":"ID",
+      "posterId":account.id,
+      "posterDisplayName":account.id,
+      "content":message
+      });
+      await firestore.collection("chats").document(ref.documentID).updateData({"id":ref.documentID});
+      print("New Chat: " + ref.toString());
+  }
+
+
   Stream<List<UserAccount>> streamUsers()
   {
     return firestore.collection("users").snapshots().map((snap) 
