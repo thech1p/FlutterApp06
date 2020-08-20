@@ -16,6 +16,9 @@ class LoggedInPage extends StatefulWidget {
 
   LoggedInPage(this.userId);
 
+  static route(String userId) =>
+      MaterialPageRoute(builder: (context) => LoggedInPage(userId));
+
   @override
   _LoggedInPageState createState() => _LoggedInPageState();
 }
@@ -41,16 +44,17 @@ class _LoggedInPageState extends State<LoggedInPage> {
               backgroundColorStart: Colors.cyan,
               backgroundColorEnd: Colors.pink,
             )),
-
-            bottomNavigationBar: GradientBottomNavigationBar(
-            backgroundColorStart: Colors.purple,
-            backgroundColorEnd: Colors.deepOrange,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-              BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('BLAH')),
-            ],
-            currentIndex: selectedIndex,
-            onTap: onPressNavigationBar,
+        bottomNavigationBar: GradientBottomNavigationBar(
+          backgroundColorStart: Colors.purple,
+          backgroundColorEnd: Colors.deepOrange,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home), title: Text('Home')),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.chat), title: Text('BLAH')),
+          ],
+          currentIndex: selectedIndex,
+          onTap: onPressNavigationBar,
         ),
         body: Center(
             child: Container(
@@ -162,6 +166,7 @@ class _LoggedInPageState extends State<LoggedInPage> {
           ),
         )));
   }
+
   void onPressNavigationBar(int index) {
     setState(() {
       selectedIndex = index;
